@@ -61,6 +61,10 @@
 #include <asm/irq_regs.h>
 #include <asm/io.h>
 
+#ifdef CONFIG_SRANDOM
+#include <../drivers/char/srandom/srandom.h>
+#endif
+
 /*********************************************************************
  *
  * Initialization and readiness waiting.
@@ -1271,6 +1275,7 @@ static ssize_t write_pool_user(struct iov_iter *iter)
 	return ret ? ret : -EFAULT;
 }
 
+#ifndef CONFIG_SRANDOM
 static ssize_t random_write_iter(struct kiocb *kiocb, struct iov_iter *iter)
 {
 	return write_pool_user(iter);
@@ -1306,6 +1311,7 @@ static ssize_t random_read_iter(struct kiocb *kiocb, struct iov_iter *iter)
 		return ret;
 	return get_random_bytes_user(iter);
 }
+#endif
 
 static long random_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 {
@@ -1377,8 +1383,13 @@ static int random_fasync(int fd, struct file *filp, int on)
 }
 
 const struct file_operations random_fops = {
+	#ifdef CONFIG_SRANDOM
+	.read  = sdevice_read,
+	.write = sdevice_write,
+	#else
 	.read_iter = random_read_iter,
 	.write_iter = random_write_iter,
+	#endif
 	.poll = random_poll,
 	.unlocked_ioctl = random_ioctl,
 	.fasync = random_fasync,
@@ -1388,8 +1399,13 @@ const struct file_operations random_fops = {
 };
 
 const struct file_operations urandom_fops = {
+	#ifdef CONFIG_SRANDOM
+	.read  = sdevice_read,
+	.write = sdevice_write,
+	#else
 	.read_iter = urandom_read_iter,
 	.write_iter = random_write_iter,
+	#endif
 	.unlocked_ioctl = random_ioctl,
 	.fasync = random_fasync,
 	.llseek = noop_llseek,
