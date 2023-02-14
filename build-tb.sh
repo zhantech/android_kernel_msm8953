@@ -31,7 +31,7 @@ REGENERATE_DEFCONFIG="false" # unset if don't want to regenerate defconfig
 KERNEL="Pringgodani"
 RELEASE_VERSION="1.8"
 DEVICE="Tissot"
-KERNELTYPE="OC-NonTreble"
+KERNELTYPE="OC-Treble"
 KERNEL_SUPPORT="10 - 13"
 KERNELNAME="${KERNEL}-${DEVICE}-${KERNELTYPE}-$(TZ=Asia/Jakarta date +%y%m%d-%H%M)"
 TEMPZIPNAME="${KERNELNAME}.zip"
