@@ -29,7 +29,7 @@ REGENERATE_DEFCONFIG="false" # unset if don't want to regenerate defconfig
 
 # Costumize
 KERNEL="Pringgodani"
-RELEASE_VERSION="1.7"
+RELEASE_VERSION="1.8"
 DEVICE="Tissot"
 KERNELTYPE="OC-NonTreble"
 KERNEL_SUPPORT="10 - 13"
@@ -40,7 +40,7 @@ ZIPNAME="${KERNELNAME}.zip"
 # Telegram
 CHATIDQ="-1001308839345"
 CHATID="-1001308839345" # Group/channel chatid (use rose/userbot to get it)
-TELEGRAM_TOKEN="5136791856:AAGY5TeaVoeJbd6a2BAlxAjOc-MFWOJzZds" # Get from botfather
+TELEGRAM_TOKEN="5988732593:AAEn7SJOoh5x8VWtevuPGO25-TRnygaLsoM" # Get from botfather
 
 # Export Telegram.sh
 TELEGRAM_FOLDER="${HOME}"/telegram
@@ -138,7 +138,7 @@ tg_cast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF
 
 tg_cast  "<b>Changelog :</b>" \
     "- Compile with Proton Clang 15.0.0" \
-    "- Bump 1.7" \
+    "- Bump 1.8" \
     "- Upstremed Kernel to 4.9.337" \
     "- More Changelogs : https://github.com/zhantech/android_kernel_msm8953/commits/Pringgodani-OC"
 
