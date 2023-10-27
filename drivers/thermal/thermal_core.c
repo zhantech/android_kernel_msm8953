@@ -474,11 +474,7 @@ static void handle_thermal_trip(struct thermal_zone_device *tz, int trip)
 		handle_critical_trips(tz, trip, type);
 	else
 		handle_non_critical_trips(tz, trip, type);
-	/*
-	 * Alright, we handled this trip successfully.
-	 * So, start monitoring again.
-	 */
-	monitor_thermal_zone(tz);
+
 	trace_thermal_handle_trip(tz, trip);
 }
 
@@ -620,12 +616,6 @@ static void thermal_zone_device_init(struct thermal_zone_device *tz)
 		pos->initialized = false;
 }
 
-static void thermal_zone_device_reset(struct thermal_zone_device *tz)
-{
-	tz->passive = 0;
-	thermal_zone_device_init(tz);
-}
-
 void thermal_zone_device_update_temp(struct thermal_zone_device *tz,
 				enum thermal_notify_event event, int temp)
 {
@@ -668,6 +658,8 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
 
 	for (count = 0; count < tz->trips; count++)
 		handle_thermal_trip(tz, count);
+
+	monitor_thermal_zone(tz);
 }
 EXPORT_SYMBOL_GPL(thermal_zone_device_update);
 
@@ -731,7 +723,7 @@ static int thermal_zone_device_clear(struct thermal_zone_device *tz)
 
 	ret = tz->ops->set_mode(tz, THERMAL_DEVICE_DISABLED);
 	mutex_lock(&tz->lock);
-	thermal_zone_device_reset(tz);
+	thermal_zone_device_init(tz);
 	list_for_each_entry(pos, &tz->thermal_instances, tz_node) {
 		pos->target = THERMAL_NO_TARGET;
 		mutex_lock(&pos->cdev->lock);
@@ -2316,7 +2308,7 @@ struct thermal_zone_device *thermal_zone_device_register(const char *type,
 
 	INIT_DEFERRABLE_WORK(&(tz->poll_queue), thermal_zone_device_check);
 
-	thermal_zone_device_reset(tz);
+	thermal_zone_device_init(tz);
 	/* Update the new thermal zone and mark it as already updated. */
 	if (atomic_cmpxchg(&tz->need_update, 1, 0))
 		thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
