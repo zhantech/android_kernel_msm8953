@@ -29,7 +29,7 @@ REGENERATE_DEFCONFIG="false" # unset if don't want to regenerate defconfig
 
 # Costumize
 KERNEL="Pringgodani"
-RELEASE_VERSION="1.9"
+RELEASE_VERSION="2.1"
 DEVICE="Tissot"
 KERNELTYPE="NonOC-Treble"
 KERNEL_SUPPORT="10 - 13"
@@ -138,7 +138,7 @@ tg_cast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF
 
 tg_cast  "<b>Changelog :</b>" \
     "- Compile with Proton Clang 15.0.0" \
-    "- Bump 1.9" \
+    "- Bump 2.1" \
     "- Update KernelSU" \
     "- More Changelogs : https://github.com/zhantech/android_kernel_msm8953/commits/Pringgodani"
 
