@@ -6,16 +6,25 @@
 # Init
 KERNEL_DIR="${PWD}"
 KERN_IMG="${KERNEL_DIR}"/out/arch/arm64/boot/Image.gz-dtb
-ANYKERNEL="${HOME}"/Build/kernel/anykernel
-COMPILER_STRING="Proton Clang 15.0.0"
+KERNEL_DIR="$(basename $PWD)"
+DISTRO=$(source /etc/os-release && echo ${NAME})
+KERVER=$(make kernelversion)
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+COMMIT_HEAD=$(git log --oneline -1)
+ANYKERNEL="${HOME}"/kernel/anykernel
 
 # Repo URL
 CLANG_REPO="https://gitlab.com/LeCmnGend/proton-clang"
+CLANG_DIR="${HOME}"/kernel/clang-proton
+COMPILER_STRING="Proton Clang 15.0.0"
 ANYKERNEL_REPO="https://github.com/zhantech/Anykernel3-tissot.git" 
 ANYKERNEL_BRANCH="Anykernel3"
+ANYKERNEL="${HOME}"/kernel/anykernel
+
+# Cleaning
+rm -rf "${KERNEL_DIR}"/out
 
 # Compiler
-CLANG_DIR="${HOME}"/Build/kernel/clang-proton
 if ! [ -d "${CLANG_DIR}" ]; then
     git clone "$CLANG_REPO" -b clang-15 --depth=1 "$CLANG_DIR"
 fi
@@ -31,9 +40,8 @@ REGENERATE_DEFCONFIG="false" # unset if don't want to regenerate defconfig
 KERNEL="Pringgodani"
 RELEASE_VERSION="2.1"
 DEVICE="Tissot"
-KERNELTYPE="NonOC-NonTreble"
 KERNEL_SUPPORT="10 - 13"
-KERNELNAME="${KERNEL}-${RELEASE_VERSION}-${DEVICE}-${KERNELTYPE}-$(TZ=Asia/Jakarta date +%y%m%d-%H%M)"
+KERNELNAME="${KERNEL}-${RELEASE_VERSION}-${DEVICE}-${BRANCH}-$(TZ=Asia/Jakarta date +%y%m%d-%H%M)"
 TEMPZIPNAME="${KERNELNAME}.zip"
 ZIPNAME="${KERNELNAME}.zip"
 
@@ -45,7 +53,7 @@ TELEGRAM_TOKEN="5988732593:AAEn7SJOoh5x8VWtevuPGO25-TRnygaLsoM" # Get from botfa
 # Export Telegram.sh
 TELEGRAM_FOLDER="${HOME}"/telegram
 if ! [ -d "${TELEGRAM_FOLDER}" ]; then
-    git clone https://github.com/Anothermi1/telegram.sh/ "${TELEGRAM_FOLDER}"
+    git clone https://github.com/zhantech/telegram.sh/ "${TELEGRAM_FOLDER}"
 fi
 
 TELEGRAM="${TELEGRAM_FOLDER}"/telegram
@@ -71,7 +79,7 @@ makekernel() {
     echo ".........................."
     echo ".     Building Kernel    ."
     echo ".........................."
-    export PATH="${HOME}"/Build/kernel/clang-proton/bin:$PATH
+    export PATH="${CLANG_DIR}"/bin:$PATH
 #    export CROSS_COMPILE=${KERNEL_DIR}/gcc/bin/aarch64-maestro-linux-gnu-
 #    export CROSS_COMPILE_ARM32=${KERNEL_DIR}/gcc32/bin/arm-maestro-linux-gnueabi-
     rm -rf "${KERNEL_DIR}"/out/arch/arm64/boot # clean previous compilation
@@ -119,16 +127,25 @@ packingkernel() {
 
     # Ship it to the CI channel
     "${TELEGRAM}" -f "$ZIPNAME" -t "${TELEGRAM_TOKEN}" -c "${CHATIDQ}" 
+echo "Kernel uploaded to telegram..."
+
+scp "$ZIPNAME" zhantech@frs.sourceforge.net:/home/frs/project/zhantech/Pringgodani/tissot
+echo "Kernel uploaded to sourceforge..."
+
+rm -rf "$ZIPNAME"
+rm -rf "${KERNEL_DIR}"/out
 }
 
 # Starting
 tg_cast "<b>STARTING KERNEL BUILD</b>" \
+    "Docker OS: ${DISTRO}" \
     "Device: ${DEVICE}" \
     "Kernel Name: <code>${KERNEL}</code>" \
-    "Build Type: <code>${KERNELTYPE}</code>" \
     "Release Version: ${RELEASE_VERSION}" \
-    "Linux Version: <code>$(make kernelversion)</code>" \
-    "Android Supported: ${KERNEL_SUPPORT}"
+    "Kernel Version : ${KERVER}" \
+    "Android Supported: ${KERNEL_SUPPORT}" \
+    "Branch : <code>$BRANCH</code>" \
+    "Last Commit : <code>$COMMIT_HEAD</code>"
 START=$(TZ=Asia/Jakarta date +"%s")
 makekernel
 packingkernel
