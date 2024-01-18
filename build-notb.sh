@@ -38,7 +38,7 @@ REGENERATE_DEFCONFIG="false" # unset if don't want to regenerate defconfig
 
 # Costumize
 KERNEL="Pringgodani"
-RELEASE_VERSION="2.1"
+RELEASE_VERSION="2.2"
 DEVICE="Tissot"
 KERNEL_SUPPORT="10 - 13"
 KERNELNAME="${KERNEL}-${RELEASE_VERSION}-${DEVICE}-${BRANCH}-$(TZ=Asia/Jakarta date +%y%m%d-%H%M)"
@@ -171,7 +171,8 @@ tg_cast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF
 
 tg_cast  "<b>Changelog :</b>" \
     "- Compile with Proton Clang 15.0.0" \
-    "- Bump 2.1" \
+    "- Bump ${RELEASE_VERSION}" \
+    "- Add Android 14 Support" \
     "- Update KernelSU" \
     "- More Changelogs : https://github.com/zhantech/android_kernel_msm8953/commits/Pringgodani"
 
