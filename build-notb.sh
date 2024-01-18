@@ -125,6 +125,11 @@ packingkernel() {
    # curl -sLo zipsigner-3.0.jar https://raw.githubusercontent.com/baalajimaestro/AnyKernel2/master/zipsigner-3.0.jar
    # java -jar zipsigner-3.0.jar "${TEMPZIPNAME}" "${ZIPNAME}"
 
+while true; do
+read -p "Do you want to upload kernel? (y/n) " yn
+case $yn in 
+	[yY] )
+
     # Ship it to the CI channel
     "${TELEGRAM}" -f "$ZIPNAME" -t "${TELEGRAM_TOKEN}" -c "${CHATIDQ}" 
 echo "Kernel uploaded to telegram..."
@@ -134,6 +139,17 @@ echo "Kernel uploaded to sourceforge..."
 
 rm -rf "$ZIPNAME"
 rm -rf "${KERNEL_DIR}"/out
+
+		break;;
+	[nN] )
+    echo ".........................."
+    echo ".     Build Finished     ."
+    echo ".........................."
+		exit;;
+	* ) echo invalid response;;
+esac
+done
+
 }
 
 # Starting
