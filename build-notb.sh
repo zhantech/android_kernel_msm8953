@@ -38,7 +38,7 @@ REGENERATE_DEFCONFIG="false" # unset if don't want to regenerate defconfig
 
 # Costumize
 KERNEL="Pringgodani"
-RELEASE_VERSION="2.1"
+RELEASE_VERSION="2.2"
 DEVICE="Tissot"
 KERNEL_SUPPORT="10 - 13"
 KERNELNAME="${KERNEL}-${RELEASE_VERSION}-${DEVICE}-${BRANCH}-$(TZ=Asia/Jakarta date +%y%m%d-%H%M)"
@@ -125,6 +125,11 @@ packingkernel() {
    # curl -sLo zipsigner-3.0.jar https://raw.githubusercontent.com/baalajimaestro/AnyKernel2/master/zipsigner-3.0.jar
    # java -jar zipsigner-3.0.jar "${TEMPZIPNAME}" "${ZIPNAME}"
 
+while true; do
+read -p "Do you want to upload kernel? (y/n) " yn
+case $yn in 
+	[yY] )
+
     # Ship it to the CI channel
     "${TELEGRAM}" -f "$ZIPNAME" -t "${TELEGRAM_TOKEN}" -c "${CHATIDQ}" 
 echo "Kernel uploaded to telegram..."
@@ -134,6 +139,17 @@ echo "Kernel uploaded to sourceforge..."
 
 rm -rf "$ZIPNAME"
 rm -rf "${KERNEL_DIR}"/out
+
+		break;;
+	[nN] )
+    echo ".........................."
+    echo ".     Build Finished     ."
+    echo ".........................."
+		exit;;
+	* ) echo invalid response;;
+esac
+done
+
 }
 
 # Starting
@@ -155,7 +171,8 @@ tg_cast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF
 
 tg_cast  "<b>Changelog :</b>" \
     "- Compile with Proton Clang 15.0.0" \
-    "- Bump 2.1" \
+    "- Bump ${RELEASE_VERSION}" \
+    "- Add Android 14 Support" \
     "- Update KernelSU" \
     "- More Changelogs : https://github.com/zhantech/android_kernel_msm8953/commits/Pringgodani-OC"
 
